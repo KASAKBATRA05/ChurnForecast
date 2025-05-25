@@ -1,4 +1,3 @@
-st.set_page_config(page_title="ChurnForecast", layout="centered")
 st.title("🔍 ChurnForecast: Customer Churn Prediction App")
 st.write("Enter customer details below to predict the likelihood of churn.")
 
