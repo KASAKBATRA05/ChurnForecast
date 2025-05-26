@@ -45,21 +45,22 @@ input_data = {}
 for feature in feature_names:
     help_text = column_help.get(feature, "")
 
+    # Special handling for SeniorCitizen (0 or 1)
     if feature == "SeniorCitizen":
-        # Special handling for binary numeric field
         selected_option = st.selectbox(f"{feature}", ["No", "Yes"], help=help_text)
         input_data[feature] = 1 if selected_option == "Yes" else 0
 
+    # For label-encoded categorical columns
     elif feature in encoders:
-        # For label encoded categorical features
         options = list(encoders[feature].classes_)
         selected_option = st.selectbox(f"{feature}", options, help=help_text)
         encoded_value = encoders[feature].transform([selected_option])[0]
         input_data[feature] = encoded_value
 
+    # For numerical fields
     else:
-        # For numerical fields
         input_data[feature] = st.number_input(f"{feature}", min_value=0.0, step=1.0, help=help_text)
+
 
 
 # Prediction button
