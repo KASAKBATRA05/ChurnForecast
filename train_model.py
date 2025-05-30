@@ -67,5 +67,3 @@ print(classification_report(y_test, y_pred))
 print("\n🧮 Confusion Matrix:")
 print(confusion_matrix(y_test, y_pred))
 
-with open("classification_report.txt", "w") as f:
-    f.write(classification_report(y_test, y_pred))
