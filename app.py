@@ -17,12 +17,12 @@ input_data = {}
 
 for i, feature in enumerate(feature_names):
     with (col1 if i % 2 == 0 else col2):
-        if feature in encoders:
+        if feature in binary_numeric_fields:
+            input_data[feature] = st.selectbox(f"{feature}", options=[0, 1])
+        elif feature in encoders:
             options = list(encoders[feature].classes_)
             selected = st.selectbox(f"{feature}", options)
             input_data[feature] = encoders[feature].transform([selected])[0]
-        elif feature in binary_numeric_fields:
-            input_data[feature] = st.selectbox(f"{feature}", options=[0, 1])
         else:
             input_data[feature] = st.number_input(f"{feature}", min_value=0.0)
 
