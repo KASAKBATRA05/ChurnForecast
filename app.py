@@ -38,3 +38,4 @@ if st.button("🎯 Predict Churn"):
     else:
         st.success(f"✅ Likely to stay – Probability: {1 - proba:.2f}")
 
+
