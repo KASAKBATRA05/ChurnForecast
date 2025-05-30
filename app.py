@@ -4,37 +4,38 @@ import streamlit as st
 import pandas as pd
 import joblib
 
-# Load model and encoders
+# Load model, encoders, and features
 pipeline = joblib.load("pipeline.pkl")
 encoders = joblib.load("encoders.pkl")
 feature_names = joblib.load("feature_names.pkl")
 
-st.set_page_config(page_title="Churn Forecast", layout="wide")
+st.set_page_config(page_title="Churn Predictor", layout="wide")
 st.title("📊 Churn Forecast – Customer Churn Prediction App")
 
-tab1, tab2 = st.tabs(["🔮 Predict Churn", "📈 Model Performance"])
+# Binary numeric columns (manually defined based on dataset)
+binary_numeric_fields = ["Senior Citizen"]
 
-# -------- TAB 1: PREDICTION FORM -------- #
+# Tabs: Prediction and Metrics
+tab1 = st.tabs(["🔮 Predict Churn"])
+
 with tab1:
-    st.markdown("### 🧾 Customer Information")
+    st.subheader("🧾 Customer Information Form")
 
     col1, col2 = st.columns(2)
     input_data = {}
 
     for i, feature in enumerate(feature_names):
-        # Alternate columns for cleaner layout
-        with col1 if i % 2 == 0 else col2:
+        with (col1 if i % 2 == 0 else col2):
             if feature in encoders:
                 options = list(encoders[feature].classes_)
                 selected = st.selectbox(f"{feature}", options)
-                encoded_value = encoders[feature].transform([selected])[0]
-                input_data[feature] = encoded_value
+                encoded = encoders[feature].transform([selected])[0]
+                input_data[feature] = encoded
+            elif feature in binary_numeric_fields:
+                val = st.selectbox(f"{feature}", options=[0, 1])
+                input_data[feature] = val
             else:
-                # Get valid range from training if available
-                if feature == "Senior Citizen":
-                    val = st.selectbox(f"{feature}", options=[0, 1])
-                else:
-                    val = st.number_input(f"{feature}", min_value=0.0)
+                val = st.number_input(f"{feature}", min_value=0.0)
                 input_data[feature] = val
 
     st.markdown("---")
@@ -52,17 +53,8 @@ with tab1:
         except Exception as e:
             st.error(f"Prediction failed: {e}")
 
-# -------- TAB 2: METRICS -------- #
-with tab2:
-    st.markdown("### 📊 Model Evaluation")
-    st.write("Here are the performance metrics for the trained XGBoost model:")
 
-    try:
-        with open("classification_report.txt", "r") as f:
-            report = f.read()
-        st.code(report, language="text")
-    except FileNotFoundError:
-        st.warning("Model performance report not found. Please re-run `train_model.py` to regenerate.")
+
 
 
 
